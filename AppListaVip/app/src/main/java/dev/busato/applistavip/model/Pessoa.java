@@ -47,4 +47,8 @@ public class Pessoa {
     public void setNome(String nome) {
         this.nome = nome;
     }
+
+    public String toString() {
+        return String.format("Nome: %s, Sobrenome: %s, Curso desejado: %s, Telefone: %s", this.nome, this.sobrenome, this.nomeDoCurso, this.telefone);
+    }
 }

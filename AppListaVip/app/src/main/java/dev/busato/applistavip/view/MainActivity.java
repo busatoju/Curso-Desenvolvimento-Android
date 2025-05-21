@@ -3,6 +3,7 @@ package dev.busato.applistavip.view;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,6 +12,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import dev.busato.applistavip.R;
+import dev.busato.applistavip.model.Pessoa;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -22,7 +24,6 @@ public class MainActivity extends AppCompatActivity {
     private Button clearButton;
     private Button saveButton;
     private Button finishButton;
-
 
 
     @Override
@@ -68,12 +69,29 @@ public class MainActivity extends AppCompatActivity {
     private void saveButton() {
         saveButton.setOnClickListener(v -> {
 
+            if (validate()) {
+
+                Pessoa pessoa = new Pessoa(firstNameInput.getText().toString(), lastNameInput.getText().toString(), courseNameInput.getText().toString(), phoneInput.getText().toString());
+                Toast.makeText(this, "Salvo " + pessoa.toString(), Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Preencha o formulário antes de salvar", Toast.LENGTH_SHORT).show();
+            }
+
         });
     }
 
     private void finishButton() {
         finishButton.setOnClickListener(v -> {
-
+            Toast.makeText(this, "Volte sempre", Toast.LENGTH_LONG).show();
+            finish();
         });
+    }
+
+    private boolean validate() {
+        return isNotEmpty(firstNameInput.getText().toString()) && isNotEmpty(lastNameInput.getText().toString()) && isNotEmpty(courseNameInput.getText().toString()) && isNotEmpty(phoneInput.getText().toString());
+    }
+
+    private boolean isNotEmpty(String value) {
+        return value != null && !value.isBlank();
     }
 }
