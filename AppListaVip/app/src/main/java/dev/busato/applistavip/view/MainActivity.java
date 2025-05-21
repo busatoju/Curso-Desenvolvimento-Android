@@ -19,6 +19,10 @@ import dev.busato.applistavip.model.Pessoa;
 
 public class MainActivity extends AppCompatActivity {
     public static final String NOME_PREFERENCES = "pref_lista_vip";
+    public static final String FIRST_NAME = "first_name";
+    public static final String LAST_NAME = "last_name";
+    public static final String COURSE_NAME = "course_name";
+    public static final String PHONE = "phone";
     private EditText firstNameInput;
     private EditText lastNameInput;
     private EditText courseNameInput;
@@ -28,7 +32,6 @@ public class MainActivity extends AppCompatActivity {
     private Button saveButton;
     private Button finishButton;
     private PessoaController controller;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,17 +43,18 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        SharedPreferences sharedPreferences = getSharedPreferences(NOME_PREFERENCES, 0);
-
-        Editor listaVip = sharedPreferences.edit();
+        SharedPreferences sharedPreferences = getSharedPreferences(NOME_PREFERENCES, MODE_PRIVATE);
 
         controller = new PessoaController();
 
-
         iniciarComponentesDeLayout();
-        clearButton();
-        saveButton(listaVip);
-        finishButton();
+
+        Pessoa pessoaInPreferences = getPessoaInPreferences(sharedPreferences);
+
+        if (pessoaInPreferences != null) popularEditText(pessoaInPreferences);
+        setupClearButton();
+        setupSaveButton(sharedPreferences);
+        setupFinishButton();
     }
 
 
@@ -65,25 +69,20 @@ public class MainActivity extends AppCompatActivity {
         finishButton = findViewById(R.id.finishButton);
     }
 
-    private void clearButton() {
-        clearButton.setOnClickListener(v -> {
-            firstNameInput.getText().clear();
-            lastNameInput.getText().clear();
-            courseNameInput.getText().clear();
-            phoneInput.getText().clear();
-        });
+    private void setupClearButton() {
+        clearButton.setOnClickListener(v -> clearFields());
     }
 
-    private void saveButton(Editor listaVip) {
+    private void setupSaveButton(SharedPreferences preferences) {
         saveButton.setOnClickListener(v -> {
-
-            if (validate()) {
+            if (validateForm()) {
+                Editor listaVip = preferences.edit();
                 Pessoa pessoa = new Pessoa(firstNameInput.getText().toString(), lastNameInput.getText().toString(), courseNameInput.getText().toString(), phoneInput.getText().toString());
                 controller.salvar(pessoa);
-                listaVip.putString("fistName", pessoa.getNome());
-                listaVip.putString("lastname", pessoa.getSobrenome());
-                listaVip.putString("courseName", pessoa.getNomeDoCurso());
-                listaVip.putString("phoneName", pessoa.getTelefone());
+                listaVip.putString(FIRST_NAME, pessoa.getNome());
+                listaVip.putString(LAST_NAME, pessoa.getSobrenome());
+                listaVip.putString(COURSE_NAME, pessoa.getNomeDoCurso());
+                listaVip.putString(PHONE, pessoa.getTelefone());
                 listaVip.apply();
                 Toast.makeText(this, "Salvo " + pessoa, Toast.LENGTH_SHORT).show();
             } else {
@@ -93,18 +92,67 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void finishButton() {
+    private boolean validateForm() {
+        boolean isValid = true;
+
+        if (firstNameInput.getText().toString().isBlank()) {
+            firstNameInput.setError("Campo obrigatório");
+            isValid = false;
+        }
+        if (lastNameInput.getText().toString().isBlank()) {
+            lastNameInput.setError("Campo obrigatório");
+            isValid = false;
+
+        }
+        if (courseNameInput.getText().toString().isBlank()) {
+            courseNameInput.setError("Campo obrigatório");
+            isValid = false;
+
+        }
+        if (phoneInput.getText().toString().isBlank()) {
+            phoneInput.setError("Campo obrigatório");
+            isValid = false;
+
+        }
+
+        return isValid;
+    }
+
+    private void setupFinishButton() {
         finishButton.setOnClickListener(v -> {
             Toast.makeText(this, "Volte sempre", Toast.LENGTH_LONG).show();
             finish();
         });
     }
 
-    private boolean validate() {
-        return isNotEmpty(firstNameInput.getText().toString()) && isNotEmpty(lastNameInput.getText().toString()) && isNotEmpty(courseNameInput.getText().toString()) && isNotEmpty(phoneInput.getText().toString());
-    }
-
     private boolean isNotEmpty(String value) {
         return value != null && !value.isBlank();
+    }
+
+    private Pessoa getPessoaInPreferences(SharedPreferences preferences) {
+        String nome = preferences.getString(FIRST_NAME, "");
+        String sobrenome = preferences.getString(LAST_NAME, "");
+        String nomeCurso = preferences.getString(COURSE_NAME, "");
+        String phone = preferences.getString(PHONE, "");
+
+        if (isNotEmpty(nome) && isNotEmpty(sobrenome) && isNotEmpty(nomeCurso) && isNotEmpty(phone)) {
+            return new Pessoa(nome, sobrenome, nomeCurso, phone);
+        }
+        return null;
+    }
+
+    private void popularEditText(Pessoa pessoa) {
+        firstNameInput.setText(pessoa.getNome());
+        lastNameInput.setText(pessoa.getSobrenome());
+        courseNameInput.setText(pessoa.getNomeDoCurso());
+        phoneInput.setText(pessoa.getTelefone());
+
+    }
+
+    private void clearFields() {
+        firstNameInput.setText("");
+        lastNameInput.setText("");
+        courseNameInput.setText("");
+        phoneInput.setText("");
     }
 }
