@@ -10,4 +10,5 @@
     <string name="last_name_input">Sobrenome</string>
     <string name="course_name_input">Nome do curso desajado</string>
     <string name="phone_input">Telefone de contato</string>
+    <string name="title_courses_list">Selecione um curso</string>
 </resources>
