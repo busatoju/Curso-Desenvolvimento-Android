@@ -18,11 +18,7 @@ import dev.busato.applistavip.controller.PessoaController;
 import dev.busato.applistavip.model.Pessoa;
 
 public class MainActivity extends AppCompatActivity {
-    public static final String NOME_PREFERENCES = "pref_lista_vip";
-    public static final String FIRST_NAME = "first_name";
-    public static final String LAST_NAME = "last_name";
-    public static final String COURSE_NAME = "course_name";
-    public static final String PHONE = "phone";
+
     private EditText firstNameInput;
     private EditText lastNameInput;
     private EditText courseNameInput;
@@ -43,17 +39,17 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        SharedPreferences sharedPreferences = getSharedPreferences(NOME_PREFERENCES, MODE_PRIVATE);
 
-        controller = new PessoaController();
+
+        controller = new PessoaController(this);
 
         iniciarComponentesDeLayout();
 
-        Pessoa pessoaInPreferences = getPessoaInPreferences(sharedPreferences);
+        Pessoa pessoaInPreferences = controller.fetch();
 
         if (pessoaInPreferences != null) popularEditText(pessoaInPreferences);
         setupClearButton();
-        setupSaveButton(sharedPreferences);
+        setupSaveButton();
         setupFinishButton();
     }
 
@@ -73,17 +69,11 @@ public class MainActivity extends AppCompatActivity {
         clearButton.setOnClickListener(v -> clearFields());
     }
 
-    private void setupSaveButton(SharedPreferences preferences) {
+    private void setupSaveButton() {
         saveButton.setOnClickListener(v -> {
             if (validateForm()) {
-                Editor listaVip = preferences.edit();
                 Pessoa pessoa = new Pessoa(firstNameInput.getText().toString(), lastNameInput.getText().toString(), courseNameInput.getText().toString(), phoneInput.getText().toString());
-                controller.salvar(pessoa);
-                listaVip.putString(FIRST_NAME, pessoa.getNome());
-                listaVip.putString(LAST_NAME, pessoa.getSobrenome());
-                listaVip.putString(COURSE_NAME, pessoa.getNomeDoCurso());
-                listaVip.putString(PHONE, pessoa.getTelefone());
-                listaVip.apply();
+                controller.save(pessoa);
                 Toast.makeText(this, "Salvo " + pessoa, Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this, "Preencha o formulário antes de salvar", Toast.LENGTH_SHORT).show();
@@ -125,28 +115,14 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private boolean isNotEmpty(String value) {
-        return value != null && !value.isBlank();
-    }
 
-    private Pessoa getPessoaInPreferences(SharedPreferences preferences) {
-        String nome = preferences.getString(FIRST_NAME, "");
-        String sobrenome = preferences.getString(LAST_NAME, "");
-        String nomeCurso = preferences.getString(COURSE_NAME, "");
-        String phone = preferences.getString(PHONE, "");
 
-        if (isNotEmpty(nome) && isNotEmpty(sobrenome) && isNotEmpty(nomeCurso) && isNotEmpty(phone)) {
-            return new Pessoa(nome, sobrenome, nomeCurso, phone);
-        }
-        return null;
-    }
 
     private void popularEditText(Pessoa pessoa) {
         firstNameInput.setText(pessoa.getNome());
         lastNameInput.setText(pessoa.getSobrenome());
         courseNameInput.setText(pessoa.getNomeDoCurso());
         phoneInput.setText(pessoa.getTelefone());
-
     }
 
     private void clearFields() {
@@ -154,5 +130,6 @@ public class MainActivity extends AppCompatActivity {
         lastNameInput.setText("");
         courseNameInput.setText("");
         phoneInput.setText("");
+        controller.clear();
     }
 }
