@@ -1,7 +1,6 @@
-package dev.busato.applistavip;
+package dev.busato.applistavip.view;
 
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -11,6 +10,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import dev.busato.applistavip.R;
+
 public class MainActivity extends AppCompatActivity {
 
     private EditText firstNameInput;
@@ -18,9 +19,10 @@ public class MainActivity extends AppCompatActivity {
     private EditText courseNameInput;
     private EditText phoneInput;
 
-    private Button  clearButton;
+    private Button clearButton;
     private Button saveButton;
     private Button finishButton;
+
 
 
     @Override
@@ -34,11 +36,15 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+
         iniciarComponentesDeLayout();
+        clearButton();
+        saveButton();
+        finishButton();
     }
 
 
-    private void iniciarComponentesDeLayout(){
+    private void iniciarComponentesDeLayout() {
         firstNameInput = findViewById(R.id.firstNameInput);
         lastNameInput = findViewById(R.id.lastNameInput);
         courseNameInput = findViewById(R.id.courseNameInput);
@@ -50,15 +56,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void clearButton(){
-        clearButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                firstNameInput.getText().clear();
-                lastNameInput.getText().clear();
-                courseNameInput.getText().clear();
-                phoneInput.getText().clear();
-            }
+    private void clearButton() {
+        clearButton.setOnClickListener(v -> {
+            firstNameInput.getText().clear();
+            lastNameInput.getText().clear();
+            courseNameInput.getText().clear();
+            phoneInput.getText().clear();
+        });
+    }
+
+    private void saveButton() {
+        saveButton.setOnClickListener(v -> {
+
+        });
+    }
+
+    private void finishButton() {
+        finishButton.setOnClickListener(v -> {
+
         });
     }
 }
