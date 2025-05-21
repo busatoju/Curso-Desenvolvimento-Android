@@ -56,7 +56,6 @@ public class MainActivity extends AppCompatActivity {
         finishButton = findViewById(R.id.finishButton);
     }
 
-
     private void clearButton() {
         clearButton.setOnClickListener(v -> {
             firstNameInput.getText().clear();
@@ -72,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
             if (validate()) {
 
                 Pessoa pessoa = new Pessoa(firstNameInput.getText().toString(), lastNameInput.getText().toString(), courseNameInput.getText().toString(), phoneInput.getText().toString());
-                Toast.makeText(this, "Salvo " + pessoa.toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Salvo " + pessoa, Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this, "Preencha o formulário antes de salvar", Toast.LENGTH_SHORT).show();
             }

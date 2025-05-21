@@ -31,7 +31,8 @@
         android:textColorHint="#78909C"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/titleApp" />
+        app:layout_constraintTop_toBottomOf="@id/titleApp"
+        tools:ignore="VisualLintTextFieldSize" />
 
     <EditText
         android:id="@+id/lastNameInput"
@@ -46,7 +47,8 @@
         android:textColorHint="#78909C"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/firstNameInput" />
+        app:layout_constraintTop_toBottomOf="@id/firstNameInput"
+        tools:ignore="VisualLintTextFieldSize" />
 
     <EditText
         android:id="@+id/courseNameInput"
@@ -61,7 +63,8 @@
         android:textColorHint="#78909C"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/lastNameInput" />
+        app:layout_constraintTop_toBottomOf="@id/lastNameInput"
+        tools:ignore="VisualLintTextFieldSize" />
 
     <EditText
         android:id="@+id/phoneInput"
@@ -76,7 +79,8 @@
         android:textColorHint="#78909C"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/courseNameInput" />
+        app:layout_constraintTop_toBottomOf="@id/courseNameInput"
+        tools:ignore="VisualLintTextFieldSize" />
 
     <LinearLayout
         android:id="@+id/textSpacerNoButtons"
@@ -126,6 +130,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textSpacerNoButtons" />
+        app:layout_constraintTop_toBottomOf="@id/textSpacerNoButtons"
+        tools:ignore="VisualLintButtonSize" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
