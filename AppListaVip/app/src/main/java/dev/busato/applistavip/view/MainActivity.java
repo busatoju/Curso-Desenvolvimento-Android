@@ -1,6 +1,5 @@
 package dev.busato.applistavip.view;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -13,25 +12,25 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.lifecycle.ViewModelProvider;
+
+import java.util.List;
 
 import dev.busato.applistavip.R;
-import dev.busato.applistavip.controller.CursoController;
-import dev.busato.applistavip.controller.PessoaController;
 import dev.busato.applistavip.model.Pessoa;
+import dev.busato.applistavip.repository.CursoRepository;
+import dev.busato.applistavip.viewmodel.CursoViewmodel;
+import dev.busato.applistavip.viewmodel.PessoaViewmodel;
 
 public class MainActivity extends AppCompatActivity {
 
-    private EditText firstNameInput;
-    private EditText lastNameInput;
-    private EditText phoneInput;
-
+    private EditText firstNameInput, lastNameInput, phoneInput;
+    private Button clearButton, saveButton, finishButton;
     private Spinner coursesSpinner;
+    private PessoaViewmodel pessoaViewmodel;
 
-    private Button clearButton;
-    private Button saveButton;
-    private Button finishButton;
-    private PessoaController pessoaController;
-    private CursoController cursoController;
+    private List<String> cursos;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,18 +43,10 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-
-        pessoaController = new PessoaController(this);
-        cursoController = new CursoController();
-
         iniciarComponentesDeLayout();
-
-        Pessoa pessoaInPreferences = pessoaController.fetch();
-
-        if (pessoaInPreferences != null) popularEditText(pessoaInPreferences);
-        setupClearButton();
-        setupSaveButton();
-        setupFinishButton();
+        setupButtons();
+        setupPessoaViewmodel();
+        setupCursoViewmodel();
     }
 
 
@@ -73,9 +64,6 @@ public class MainActivity extends AppCompatActivity {
 
         /// Spinner
         coursesSpinner = findViewById(R.id.courseSpinner);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>((Context) this, android.R.layout.simple_list_item_1, cursoController.dataToSpinner());
-        adapter.setDropDownViewResource(android.R.layout.simple_list_item_1);
-        coursesSpinner.setAdapter(adapter);
 
     }
 
@@ -86,8 +74,8 @@ public class MainActivity extends AppCompatActivity {
     private void setupSaveButton() {
         saveButton.setOnClickListener(v -> {
             if (validateForm()) {
-                Pessoa pessoa = new Pessoa(firstNameInput.getText().toString(), lastNameInput.getText().toString(), "Nome do curso", phoneInput.getText().toString());
-                pessoaController.save(pessoa);
+                Pessoa pessoa = new Pessoa(firstNameInput.getText().toString(), lastNameInput.getText().toString(), coursesSpinner.getSelectedItem().toString(), phoneInput.getText().toString());
+                pessoaViewmodel.savePessoa(pessoa);
                 Toast.makeText(this, "Salvo " + pessoa, Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this, "Preencha o formulário antes de salvar", Toast.LENGTH_SHORT).show();
@@ -108,11 +96,7 @@ public class MainActivity extends AppCompatActivity {
             isValid = false;
 
         }
-//        if (courseNameInput.getText().toString().isBlank()) {
-//            courseNameInput.setError("Campo obrigatório");
-//            isValid = false;
-//
-//        }
+
         if (phoneInput.getText().toString().isBlank()) {
             phoneInput.setError("Campo obrigatório");
             isValid = false;
@@ -130,16 +114,53 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void popularEditText(Pessoa pessoa) {
+    private void popularFormulario(Pessoa pessoa) {
         firstNameInput.setText(pessoa.getNome());
         lastNameInput.setText(pessoa.getSobrenome());
         phoneInput.setText(pessoa.getTelefone());
+
+
+        if (!pessoa.getNomeDoCurso().isEmpty()) {
+            int posicao = cursos.indexOf(pessoa.getNomeDoCurso());
+            if (posicao >= 0) {
+                coursesSpinner.setSelection(posicao);
+            }
+        }
     }
 
     private void clearFields() {
         firstNameInput.setText("");
         lastNameInput.setText("");
         phoneInput.setText("");
-        pessoaController.clear();
+        pessoaViewmodel.clear();
+    }
+
+    private void setupButtons() {
+        setupClearButton();
+        setupFinishButton();
+        setupSaveButton();
+    }
+
+    private void setupPessoaViewmodel() {
+        pessoaViewmodel = new ViewModelProvider(this).get(PessoaViewmodel.class);
+        pessoaViewmodel.init(this);
+
+        pessoaViewmodel.getPessoa().observe(this, pessoa -> {
+            if (pessoa != null) popularFormulario(pessoa);
+        });
+    }
+
+    private void setupCursoViewmodel() {
+        CursoViewmodel cursoViewmodel = new ViewModelProvider(this).get(CursoViewmodel.class);
+        cursoViewmodel.init(new CursoRepository());
+        cursos = cursoViewmodel.getCursosLiveData().getValue();
+        assert cursos != null;
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_list_item_1,
+                cursos
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        coursesSpinner.setAdapter(adapter);
     }
 }

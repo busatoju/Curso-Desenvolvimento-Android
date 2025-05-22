@@ -1,26 +1,25 @@
-package dev.busato.applistavip.controller;
+package dev.busato.applistavip.repository;
 
-import static android.content.Context.MODE_PRIVATE;
-
+import android.content.Context;
 import android.content.SharedPreferences;
 
 import dev.busato.applistavip.model.Pessoa;
-import dev.busato.applistavip.view.MainActivity;
 
-public class PessoaController {
-    public static final String NOME_PREFERENCES = "pref_lista_vip";
-    public static final String FIRST_NAME = "first_name";
-    public static final String LAST_NAME = "last_name";
-    public static final String COURSE_NAME = "course_name";
-    public static final String PHONE = "phone";
+public class PessoaRepository {
+
+    private static final String PREF_NAME = "pref_lista_vip";
+    private static final String FIRST_NAME = "first_name";
+    private static final String LAST_NAME = "last_name";
+    private static final String COURSE_NAME = "course_name";
+    private static final String PHONE = "phone";
 
     private final SharedPreferences sharedPreferences;
 
-    public PessoaController(MainActivity mainActivity) {
-        sharedPreferences = mainActivity.getSharedPreferences(NOME_PREFERENCES, MODE_PRIVATE);
+    public PessoaRepository(Context context) {
+        sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
     }
 
-    public void save(Pessoa pessoa) {
+    public void savePessoa(Pessoa pessoa) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(FIRST_NAME, pessoa.getNome());
         editor.putString(LAST_NAME, pessoa.getSobrenome());
@@ -29,13 +28,13 @@ public class PessoaController {
         editor.apply();
     }
 
-    public Pessoa fetch() {
+    public Pessoa getPessoa() {
         String nome = sharedPreferences.getString(FIRST_NAME, "");
         String sobrenome = sharedPreferences.getString(LAST_NAME, "");
         String nomeCurso = sharedPreferences.getString(COURSE_NAME, "");
         String phone = sharedPreferences.getString(PHONE, "");
 
-        if (isNotEmpty(nome) && isNotEmpty(sobrenome) && isNotEmpty(nomeCurso) && isNotEmpty(phone)) {
+        if (!nome.isBlank() && !sobrenome.isBlank() && !nomeCurso.isBlank() && !phone.isBlank()) {
             return new Pessoa(nome, sobrenome, nomeCurso, phone);
         }
         return null;
@@ -43,11 +42,6 @@ public class PessoaController {
 
     public void clear() {
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.clear();
-        editor.apply();
-    }
-
-    private boolean isNotEmpty(String value) {
-        return value != null && !value.isBlank();
+        editor.clear().apply();
     }
 }

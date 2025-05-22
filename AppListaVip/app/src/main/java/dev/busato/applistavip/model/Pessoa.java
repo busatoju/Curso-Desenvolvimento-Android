@@ -2,12 +2,7 @@ package dev.busato.applistavip.model;
 
 public class Pessoa {
 
-    private String nome;
-    private String sobrenome;
-
-    private String nomeDoCurso;
-
-    private String telefone;
+    private String nome, sobrenome, nomeDoCurso, telefone;
 
     public Pessoa(String nome, String sobrenome, String nomeDoCurso, String telefone) {
         this.nome = nome;
